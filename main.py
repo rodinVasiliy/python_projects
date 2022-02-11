@@ -64,8 +64,8 @@ median_1_red = median_1[:,:,0]
 median_1_green = median_1[:,:,1]
 median_1_blue = median_1[:,:,2]
 hist_median1_red, bins_median_red = histogram(median_1_red)
-hist_median1_green = histogram(median_1_green)
-hist_median1_blue = histogram(median_1_blue)
+hist_median1_green, bins_median_green = histogram(median_1_green)
+hist_median1_blue, bins_median_blue = histogram(median_1_blue)
 
 fig1 = plt.figure(figsize=(15, 15))
 fig1.add_subplot(2, 2, 1)
@@ -74,6 +74,12 @@ fig1.add_subplot(2, 2, 2)
 imshow(median_1)
 fig1.add_subplot(2, 2, 3)
 plt.plot(bins_red, hist_image_red, color='red')
+plt.plot(bins_blue, hist_image_blue, color='blue')
+plt.plot(bins_green, hist_image_green, color='green')
+plt.legend(['green', 'red', 'blue'])
 fig1.add_subplot(2, 2, 4)
 plt.plot(bins_median_red, hist_median1_red, color='red')
+plt.plot(bins_median_blue, hist_median1_blue, color='blue')
+plt.plot(bins_median_green, hist_median1_green, color='green')
+plt.legend(['green', 'red', 'blue'])
 show()
