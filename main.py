@@ -4,14 +4,20 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 import json
-from matplotlib import pyplot as plt
-from skimage.io import imread, imsave, imshow, show
-from skimage.exposure import match_histograms, histogram
-from skimage.filters import median
-from skimage.morphology import disk, diamond, star, rectangle
-import numpy as np
 
-settings = {'parameter_0': 'image.jpg'
+import numpy as np
+from matplotlib import pyplot as plt
+from skimage.exposure import histogram
+from skimage.filters import median
+from skimage.io import imread, imshow, show
+from skimage.morphology import disk, diamond, star, rectangle
+from skimage import data
+from skimage.util import random_noise
+from skimage.morphology import disk
+from skimage.filters import median
+
+settings = {'read_path': 'image.jpg',
+            'save_path': 'new.jpg'
             }
 
 # open file  and serialize settings in this file
@@ -21,10 +27,12 @@ with open('settings.json', 'w') as fp:
 with open('settings.json') as info_data:
     json_data = json.load(info_data)
 
-path = json_data['parameter_0']
+path = json_data['read_path']
 image = imread(path)
+
 # imshow(image)
 
+# https://scikit-image.org/docs/stable/api/skimage.filters.html#skimage.filters.median
 median_1 = median(image, np.dstack(rectangle(8, 6)), mode='wrap')
 median_2 = median(image, np.dstack((diamond(5), diamond(5), diamond(5))), mode='nearest')
 median_3 = median(image, np.dstack((disk(7), disk(7), disk(7))), mode='reflect')
@@ -53,21 +61,14 @@ hist_image_red, bins_red = histogram(image_red)
 hist_image_green, bins_green = histogram(image_green)
 hist_image_blue, bins_blue = histogram(image_blue)
 
-# fig1 = plt.figure(figsize=(10, 5))
-# plt.ylabel('число отсчетов')
-# plt.xlabel('значение яркости')
-# plt.plot(bins_red, hist_image_red, color='red', linestyle='-', linewidth=1)
-# plt.plot(bins_blue, hist_image_blue, color='blue', linestyle='-', linewidth=1)
-# plt.plot(bins_green, hist_image_green, color='green', linestyle='-', linewidth=1)
-
-median_1_red = median_1[:,:,0]
-median_1_green = median_1[:,:,1]
-median_1_blue = median_1[:,:,2]
+median_1_red = median_1[:, :, 2]
+median_1_green = median_1[:, :, 1]
+median_1_blue = median_1[:, :, 0]
 hist_median1_red, bins_median_red = histogram(median_1_red)
 hist_median1_green, bins_median_green = histogram(median_1_green)
 hist_median1_blue, bins_median_blue = histogram(median_1_blue)
 
-fig1 = plt.figure(figsize=(15, 15))
+fig1 = plt.figure(figsize=(10, 10))
 fig1.add_subplot(2, 2, 1)
 imshow(image)
 fig1.add_subplot(2, 2, 2)
@@ -76,10 +77,29 @@ fig1.add_subplot(2, 2, 3)
 plt.plot(bins_red, hist_image_red, color='red')
 plt.plot(bins_blue, hist_image_blue, color='blue')
 plt.plot(bins_green, hist_image_green, color='green')
-plt.legend(['green', 'red', 'blue'])
+plt.legend(['red', 'blue', 'green'])
 fig1.add_subplot(2, 2, 4)
 plt.plot(bins_median_red, hist_median1_red, color='red')
 plt.plot(bins_median_blue, hist_median1_blue, color='blue')
 plt.plot(bins_median_green, hist_median1_green, color='green')
-plt.legend(['green', 'red', 'blue'])
+plt.legend(['red', 'blue', 'green'])
+plt.tight_layout()
+path_save = json_data['save_path']
+plt.savefig(path_save)
 show()
+
+fig2 = plt.figure(figsize=(10, 10))
+img = data.camera()
+fig2.add_subplot(1, 3, 1)
+imshow(img)
+# salt and pepper
+image1 = random_noise(img, mode="s&p")
+fig2.add_subplot(1, 3, 2)
+imshow(image1)
+new = median(image1, diamond(5), mode='wrap')
+fig2.add_subplot(1, 3, 3)
+imshow(new)
+show()
+
+
+
